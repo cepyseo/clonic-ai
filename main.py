@@ -1,10 +1,8 @@
-import os
 from flask import Flask, request
 import telebot
 import requests
 import json
-from PIL import Image
-from io import BytesIO
+import os
 
 app = Flask(__name__)
 
@@ -25,11 +23,9 @@ def send_welcome(message):
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
     try:
-        # Fotoğrafı al
         file_info = bot.get_file(message.photo[-1].file_id)
         photo_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_info.file_path}"
         
-        # OpenRouter API'ye istek gönder
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
             headers={
@@ -59,7 +55,6 @@ def handle_photo(message):
             }
         )
         
-        # API yanıtını al ve kullanıcıya gönder
         result = response.json()
         analysis = result['choices'][0]['message']['content']
         bot.reply_to(message, analysis)
